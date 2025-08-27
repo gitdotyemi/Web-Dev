@@ -1,9 +1,12 @@
+"use strict"
+
 //Fetch existing todos from local storage
 const getSavedTodos = () => {
     const todoJSON = localStorage.getItem("todos")
-    if (todoJSON !== null) {
-        return JSON.parse(todoJSON)
-    } else {
+    
+    try {
+        return todoJSON ? JSON.parse(todoJSON) : []
+    } catch (e) {
         return []
     }
 }
@@ -26,7 +29,7 @@ const removeTodo = (id) => {
 const toggleTodo = (id) => {
     const todo = todos.find((todo) => todo.id === id)
 
-    if (todo !== undefined) {
+    if (todo) {
         todo.completed = !todo.completed
     }
 }
@@ -36,11 +39,7 @@ const renderTodos = function (todos, filters) {
     let filteredTodos = todos.filter((todo) => todo.text.toLowerCase().includes(filters.searchText.toLowerCase()))
 
     filteredTodos = filteredTodos.filter((todo) => {
-        if (filters.hideCompleted) {
-            return !todo.completed
-        } else {
-            return todos
-        }
+        return filters.hideCompleted ? !todo.completed : todos
     })
 
     const incompleteTodos = filteredTodos.filter((todo) => !todo.completed)
